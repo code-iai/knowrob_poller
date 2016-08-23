@@ -1,0 +1,11 @@
+<launch>
+  <node pkg="knowrob_poller" type="knowrob_poller" name="knowrob_poller"
+        output="screen" >
+    <param name="periodicity" value="2.0" />
+    <remap from="~message" to="/speak_listener/speak" />
+  </node>
+
+  <node pkg="speak" type="speak_listener" name="speak_listener"
+        output="screen" />
+
+</launch>

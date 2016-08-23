@@ -30,6 +30,7 @@
 #define KNOWROB_POLLER_KNOWROB_POLLER_NODE_HPP
 
 #include <ros/ros.h>
+#include <std_msgs/String.h>
 #include <knowrob_poller/ros_utils.hpp>
 
 namespace knowrob_poller
@@ -42,21 +43,24 @@ namespace knowrob_poller
 
       void start()
       {
-        ros::Duration period = ros::Duration(knowrob_poller::readParam<double>(nh_, "periodicity"));
+        double period = knowrob_poller::readParam<double>(nh_, "periodicity");
         ROS_INFO_STREAM("period: " << period);
-        timer_ = nh_.createTimer(period, &KnowrobPoller::callback, this);
+        string_pub_ = nh_.advertise<std_msgs::String>("message", 1);
+        timer_ = nh_.createTimer(ros::Duration(period), &KnowrobPoller::callback, this);
         // TODO: complete me
       }
 
     private:
       ros::NodeHandle nh_;
+      ros::Publisher string_pub_;
       ros::Timer timer_;
 
       void callback(const ros::TimerEvent& e)
       {
+        std_msgs::String msg;
+        msg.data = "Nothing new to say.";
+        string_pub_.publish(msg);
         // TODO: complete me
-        ROS_INFO("Called.");
-
       }
   };
 }
