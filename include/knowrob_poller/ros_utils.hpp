@@ -26,23 +26,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <knowrob_poller/knowrob_poller.hpp>
+#ifndef KNOWROB_POLLER_ROS_UTILS_HPP
+#define KNOWROB_POLLER_ROS_UTILS_HPP
 
-int main(int argc, char **argv) 
-{
-  ros::init(argc, argv, "knowrob_poller");
-  ros::NodeHandle nh("~");
+#include <exception>
 
-  try
-  {
-    knowrob_poller::KnowrobPoller my_poller(nh);
-    my_poller.start();
-  }
-  catch (const std::exception& e)
-  {
-    ROS_ERROR("%s", e.what());
-  }
-
-  ros::spin();
-  return 0;
-}
+#endif // KNOWROB_POLLER_ROS_UTILS_HPP

@@ -26,23 +26,28 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <knowrob_poller/knowrob_poller.hpp>
+#ifndef KNOWROB_POLLER_KNOWROB_POLLER_NODE_HPP
+#define KNOWROB_POLLER_KNOWROB_POLLER_NODE_HPP
 
-int main(int argc, char **argv) 
+#include <ros/ros.h>
+#include <knowrob_poller/ros_utils.hpp>
+
+namespace knowrob_poller
 {
-  ros::init(argc, argv, "knowrob_poller");
-  ros::NodeHandle nh("~");
-
-  try
+  class KnowrobPoller
   {
-    knowrob_poller::KnowrobPoller my_poller(nh);
-    my_poller.start();
-  }
-  catch (const std::exception& e)
-  {
-    ROS_ERROR("%s", e.what());
-  }
+    public:
+      KnowrobPoller(const ros::NodeHandle& nh) : nh_(nh) {}
+      ~KnowrobPoller() {}
 
-  ros::spin();
-  return 0;
+      void start()
+      {
+        // TODO: complete me
+      }
+
+    private:
+      ros::NodeHandle nh_;
+  };
 }
+
+#endif // KNOWROB_POLLER_KNOWROB_POLLER_NODE_HPP

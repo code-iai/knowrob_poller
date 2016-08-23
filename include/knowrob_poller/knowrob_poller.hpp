@@ -29,4 +29,7 @@
 #ifndef KNOWROB_POLLER_KNOWROB_POLLER_HPP
 #define KNOWROB_POLLER_KNOWROB_POLLER_HPP
 
+#include <knowrob_poller/ros_utils.hpp>
+#include <knowrob_poller/knowrob_poller_node.hpp>
+
 #endif // KNOWROB_POLLER_KNOWROB_POLLER_HPP
