@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package>
+  <name>knowrob_poller</name>
+  <version>0.0.0</version>
+  <description>
+    Library and node to periodically poll knowrob for facts.
+  </description>
+
+  <maintainer email="georg.bartels@cs.uni-bremen.de">Georg Bartels</maintainer>
+  <author email="georg.bartels@cs.uni-bremen.de">Georg Bartels</author>
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>roscpp</build_depend>
+  <run_depend>roscpp</run_depend>
+
+</package>
