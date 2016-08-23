@@ -42,11 +42,22 @@ namespace knowrob_poller
 
       void start()
       {
+        ros::Duration period = ros::Duration(knowrob_poller::readParam<double>(nh_, "periodicity"));
+        ROS_INFO_STREAM("period: " << period);
+        timer_ = nh_.createTimer(period, &KnowrobPoller::callback, this);
         // TODO: complete me
       }
 
     private:
       ros::NodeHandle nh_;
+      ros::Timer timer_;
+
+      void callback(const ros::TimerEvent& e)
+      {
+        // TODO: complete me
+        ROS_INFO("Called.");
+
+      }
   };
 }
 

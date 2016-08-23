@@ -37,12 +37,12 @@ int main(int argc, char **argv)
   {
     knowrob_poller::KnowrobPoller my_poller(nh);
     my_poller.start();
+    ros::spin();
   }
   catch (const std::exception& e)
   {
     ROS_ERROR("%s", e.what());
   }
 
-  ros::spin();
   return 0;
 }

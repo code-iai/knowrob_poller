@@ -29,6 +29,20 @@
 #ifndef KNOWROB_POLLER_ROS_UTILS_HPP
 #define KNOWROB_POLLER_ROS_UTILS_HPP
 
+#include <ros/ros.h>
 #include <exception>
+
+namespace knowrob_poller
+{
+  template<class T>
+  inline T readParam(const ros::NodeHandle& nh, const std::string& name)
+  {
+    T param;
+    if(!nh.getParam(name, param))
+      throw std::runtime_error("Could not find parameter '" + name + 
+          "' in namespace '" + nh.getNamespace() + "'.");
+    return param;
+  }
+}
 
 #endif // KNOWROB_POLLER_ROS_UTILS_HPP
