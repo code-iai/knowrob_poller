@@ -3,12 +3,14 @@ project(knowrob_poller)
 
 find_package(catkin REQUIRED COMPONENTS
   roscpp
+  json_prolog
+  std_msgs
 )
 
 catkin_package(
   INCLUDE_DIRS include
 #  LIBRARIES knowrob_poller
-#  CATKIN_DEPENDS roscpp
+  CATKIN_DEPENDS roscpp json_prolog std_msgs
 #  DEPENDS system_lib
 )
 

@@ -32,6 +32,7 @@
 #include <ros/ros.h>
 #include <std_msgs/String.h>
 #include <knowrob_poller/ros_utils.hpp>
+#include <json_prolog/prolog.h>
 
 namespace knowrob_poller
 {
@@ -44,23 +45,44 @@ namespace knowrob_poller
       void start()
       {
         double period = knowrob_poller::readParam<double>(nh_, "periodicity");
-        ROS_INFO_STREAM("period: " << period);
+        dummy_mode_ = knowrob_poller::readParam<bool>(nh_, "dummy_mode");
         string_pub_ = nh_.advertise<std_msgs::String>("message", 1);
         timer_ = nh_.createTimer(ros::Duration(period), &KnowrobPoller::callback, this);
-        // TODO: complete me
       }
 
     private:
       ros::NodeHandle nh_;
       ros::Publisher string_pub_;
       ros::Timer timer_;
+      json_prolog::Prolog prolog_;
+      bool dummy_mode_;
+
+      void send_speech(const std::string& speech)
+      {
+        std_msgs::String msg;
+        msg.data = speech;
+        string_pub_.publish(msg);
+      }
 
       void callback(const ros::TimerEvent& e)
       {
-        std_msgs::String msg;
-        msg.data = "Nothing new to say.";
-        string_pub_.publish(msg);
-        // TODO: complete me
+        std::string query_string;
+
+        if (dummy_mode_)
+          query_string = "rdf_instance_from_class(knowrob:'GraspingSomething', A), comment_action(A, What).";
+        else
+          query_string = "knowrob_robohow:comment(What, Where).";
+
+        json_prolog::PrologQueryProxy bdgs = prolog_.query(query_string);
+
+        if (bdgs.begin() == bdgs.end())
+          send_speech("Prolog query returned no bindings.");
+        else
+        {
+//          send_speech((*(bdgs.begin()))["What"]);
+          send_speech(bdgs.begin()->operator[]("What"));
+          // TODO: send where
+        }
       }
   };
 }
