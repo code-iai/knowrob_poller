@@ -26,5 +26,5 @@ roslaunch knowrob_poller knowrob_poller.launch
 The poller will then publish its results over 2 topics:
   * ```~message``` (std_msgs/String): A semi-intelligent phrase which the robot wants to utter about something that happens.
   * ```~point``` (geometry_msgs/PointStamped): A point where the robot wants to point to support its speech-act.
-  * 
+
 For testing with a ```knowrob``` server without any asserted facts, use the latter launch-file with the parameter ```dummmy_mode:=true```
