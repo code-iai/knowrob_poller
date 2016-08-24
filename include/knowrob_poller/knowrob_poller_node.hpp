@@ -31,6 +31,7 @@
 
 #include <ros/ros.h>
 #include <std_msgs/String.h>
+#include <geometry_msgs/PointStamped.h>
 #include <knowrob_poller/ros_utils.hpp>
 #include <json_prolog/prolog.h>
 
@@ -47,12 +48,13 @@ namespace knowrob_poller
         double period = knowrob_poller::readParam<double>(nh_, "periodicity");
         dummy_mode_ = knowrob_poller::readParam<bool>(nh_, "dummy_mode");
         string_pub_ = nh_.advertise<std_msgs::String>("message", 1);
+        point_pub_ = nh_.advertise<geometry_msgs::PointStamped>("point", 1);
         timer_ = nh_.createTimer(ros::Duration(period), &KnowrobPoller::callback, this);
       }
 
     private:
       ros::NodeHandle nh_;
-      ros::Publisher string_pub_;
+      ros::Publisher string_pub_, point_pub_;
       ros::Timer timer_;
       json_prolog::Prolog prolog_;
       bool dummy_mode_;
@@ -64,14 +66,25 @@ namespace knowrob_poller
         string_pub_.publish(msg);
       }
 
+      void send_point(double x, double y, double z)
+      {
+        geometry_msgs::PointStamped msg;
+        msg.header.stamp = ros::Time::now();
+        msg.header.frame_id = "map";
+        msg.point.x = x;
+        msg.point.y = y;
+        msg.point.z = z;
+        point_pub_.publish(msg);
+      }
+
       void callback(const ros::TimerEvent& e)
       {
         std::string query_string;
 
         if (dummy_mode_)
-          query_string = "rdf_instance_from_class(knowrob:'GraspingSomething', A), comment_action(A, What).";
+          query_string = "rdf_instance_from_class(knowrob:'GraspingSomething', _A), create_timepoint(0.0, _I), rdf_assert(_A, knowrob:'startTime', _I), comment(What, [X, Y, Z]).";
         else
-          query_string = "knowrob_robohow:comment(What, Where).";
+          query_string = "comment(What, [X, Y, Z]).";
 
         json_prolog::PrologQueryProxy bdgs = prolog_.query(query_string);
 
@@ -79,9 +92,10 @@ namespace knowrob_poller
           send_speech("Prolog query returned no bindings.");
         else
         {
-//          send_speech((*(bdgs.begin()))["What"]);
-          send_speech(bdgs.begin()->operator[]("What"));
-          // TODO: send where
+          json_prolog::PrologBindings bdg = *(bdgs.begin());
+          send_speech(bdg["What"]);
+          send_point(std::stod(bdg["X"].toString()), 
+              std::stod(bdg["Y"].toString()), std::stod(bdg["Z"].toString()));
         }
       }
   };

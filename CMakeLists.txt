@@ -1,16 +1,18 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(knowrob_poller)
+set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   json_prolog
   std_msgs
+  geometry_msgs
 )
 
 catkin_package(
   INCLUDE_DIRS include
 #  LIBRARIES knowrob_poller
-  CATKIN_DEPENDS roscpp json_prolog std_msgs
+  CATKIN_DEPENDS roscpp json_prolog std_msgs geometry_msgs
 #  DEPENDS system_lib
 )
 

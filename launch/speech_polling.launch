@@ -1,15 +1,10 @@
 <launch>
-  <arg name="speaker_on" default="false" />
   <arg name="dummy_mode" default="false" />
 
   <node pkg="knowrob_poller" type="knowrob_poller" name="knowrob_poller"
         output="screen" >
     <param name="periodicity" value="2.0" />
     <param name="dummy_mode" value="$(arg dummy_mode)" />
-    <remap from="~message" to="/speak_listener/speak" />
   </node>
-
-  <node if="$(arg speaker_on)" pkg="speak" type="speak_listener" name="speak_listener"
-        output="screen" />
 
 </launch>
