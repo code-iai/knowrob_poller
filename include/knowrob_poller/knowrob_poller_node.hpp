@@ -29,11 +29,13 @@
 #ifndef KNOWROB_POLLER_KNOWROB_POLLER_NODE_HPP
 #define KNOWROB_POLLER_KNOWROB_POLLER_NODE_HPP
 
+#include <exception>
 #include <ros/ros.h>
 #include <std_msgs/String.h>
 #include <geometry_msgs/PointStamped.h>
 #include <knowrob_poller/ros_utils.hpp>
 #include <json_prolog/prolog.h>
+#include <iai_pepper_demo_msgs/PepperComm.h>
 
 namespace knowrob_poller
 {
@@ -50,11 +52,15 @@ namespace knowrob_poller
         string_pub_ = nh_.advertise<std_msgs::String>("message", 1);
         point_pub_ = nh_.advertise<geometry_msgs::PointStamped>("point", 1);
         timer_ = nh_.createTimer(ros::Duration(period), &KnowrobPoller::callback, this);
+        pepper_client_ = nh_.serviceClient<iai_pepper_demo_msgs::PepperComm>("/pepper/comm");
+        if (!pepper_client_.waitForExistence(ros::Duration(5)))
+          throw std::runtime_error("Could not reach pepper server.");
       }
 
     private:
       ros::NodeHandle nh_;
       ros::Publisher string_pub_, point_pub_;
+      ros::ServiceClient pepper_client_;
       ros::Timer timer_;
       json_prolog::Prolog prolog_;
       bool dummy_mode_;
@@ -64,6 +70,10 @@ namespace knowrob_poller
         std_msgs::String msg;
         msg.data = speech;
         string_pub_.publish(msg);
+
+        iai_pepper_demo_msgs::PepperComm r;
+        r.request.speak = speech;
+        pepper_client_.call(r);
       }
 
       void send_point(double x, double y, double z)
@@ -84,7 +94,7 @@ namespace knowrob_poller
         if (dummy_mode_)
           query_string = "rdf_instance_from_class(knowrob:'GraspingSomething', _A), create_timepoint(0.0, _I), rdf_assert(_A, knowrob:'startTime', _I), comment(What, [X, Y, Z]).";
         else
-          query_string = "comment(What, [X, Y, Z]).";
+          query_string = "comment(What, _).";
 
         json_prolog::PrologQueryProxy bdgs = prolog_.query(query_string);
 
@@ -94,8 +104,8 @@ namespace knowrob_poller
         {
           json_prolog::PrologBindings bdg = *(bdgs.begin());
           send_speech(bdg["What"]);
-          send_point(std::stod(bdg["X"].toString()), 
-              std::stod(bdg["Y"].toString()), std::stod(bdg["Z"].toString()));
+//          send_point(std::stod(bdg["X"].toString()), 
+//              std::stod(bdg["Y"].toString()), std::stod(bdg["Z"].toString()));
         }
       }
   };

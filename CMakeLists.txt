@@ -7,12 +7,13 @@ find_package(catkin REQUIRED COMPONENTS
   json_prolog
   std_msgs
   geometry_msgs
+  iai_pepper_demo_msgs
 )
 
 catkin_package(
   INCLUDE_DIRS include
 #  LIBRARIES knowrob_poller
-  CATKIN_DEPENDS roscpp json_prolog std_msgs geometry_msgs
+  CATKIN_DEPENDS roscpp json_prolog std_msgs geometry_msgs iai_pepper_demo_msgs
 #  DEPENDS system_lib
 )
 

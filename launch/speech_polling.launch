@@ -4,7 +4,7 @@
   <node pkg="knowrob_poller" type="knowrob_poller" name="knowrob_poller"
         output="screen" >
     <remap from="~message" to="/speak_listener/speak"/>
-    <param name="periodicity" value="10.0" />
+    <param name="periodicity" value="4.0" />
     <param name="dummy_mode" value="$(arg dummy_mode)" />
   </node>
 
